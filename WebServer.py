@@ -11,12 +11,12 @@ import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(17, GPIO.OUT)
+pwm = GPIO.PWM(17, 50)
+pwm.start(3)
 
 def moveServo(param):
-    pwm = GPIO.PWM(17, 50)
     dutyCycle = 3 + float(param["pos"])/18
-    pwm.start(dutyCycle)
-    pwm.stop()
+    pwm.ChangeDutyCycle(dutyCycle)
     return 0
 
 callbacks = {"moveServo": moveServo}
