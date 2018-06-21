@@ -14,7 +14,7 @@ GPIO.setup(17, GPIO.OUT)
 
 def moveServo(param):
     pwm = GPIO.PWM(17, 50)
-    dutyCycle = 3 + param["pos"]/18
+    dutyCycle = 3 + float(param["pos"])/18
     pwm.start(dutyCycle)
     pwm.stop()
     return 0
