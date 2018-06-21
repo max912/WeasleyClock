@@ -141,7 +141,7 @@ class WebServer(object):
                         response_header = self._generate_headers(404)
 
                         if request_method == "GET": # Temporary 404 Response Page
-                            response_data = b"<html><body><center><h1>Error 404: File not found</h1></center><p>Head back to <a href="/">dry land</a>.</p></body></html>"
+                            response_data = "<html><body><center><h1>Error 404: File not found</h1></center><p>Head back to <a href="/">dry land</a>.</p></body></html>"
 
 
                 response = response_header.encode()
