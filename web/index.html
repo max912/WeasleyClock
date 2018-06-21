@@ -8,5 +8,13 @@
 
 	<body>
   		<p>Hello World!</p>
+			<input type="number" min="0" max="180" id="angle" />
+			<button type="button" id="moveServo">Move servo!</button>
 	</body>
+	<script type="text/javascript">
+			$("#moveServo").click(function() {
+				my_angle = $("#angle").value;
+				$.post("moveServo", {angle: my_angle});
+			});
+	</script>
 </html>
