@@ -13,8 +13,8 @@
 	</body>
 	<script type="text/javascript">
 			$("#moveServo").click(function() {
-				my_angle = $("#angle").value;
-				$.post("moveServo", {angle: my_angle});
+				my_angle = $("#angle")[0].value;
+				$.get("moveServo?who=altea&pos="+my_angle, function() {});
 			});
 	</script>
 </html>

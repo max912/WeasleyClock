@@ -17,6 +17,7 @@ def moveServo(angle):
     dutyCycle = 3 + angle/18
     pwm.start(dutyCycle)
     pwm.stop()
+    return 0
 
 callbacks = {"moveServo": moveServo}
 
@@ -115,7 +116,12 @@ class WebServer(object):
                 request = file_requested.split('/')[1]
                 if request in callbacks:
                     response_header = self._generate_headers(200)
-                    response_data = str(callbacks[request]())
+                    par = file_requested.split('?')
+                    print "FILE REQ"
+                    print file_requested
+                    print "DATA"
+                    print data
+                    #response_data = str(callbacks[request]())
 
                 else:
                     filepath_to_serve = self.content_dir + file_requested
