@@ -7,6 +7,18 @@ import signal # Allow socket destruction on Ctrl+C
 import sys
 import time
 import threading
+import RPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(17, GPIO.OUT)
+
+def moveServo(angle):
+    pwm = GPIO.PWM(17, 50)
+    dutyCycle = 3 + angle/18
+    pwm.start(dutyCycle)
+    pwm.stop()
+
+callbacks = {"moveServo": moveServo}
 
 class WebServer(object):
     """
@@ -132,9 +144,9 @@ class WebServer(object):
                 client.close()
                 break
 
-	    elif request_method == "POST":
-		print("POST REQUEST")
-		print data
+            elif request_method == "POST":
+                print("POST REQUEST")
+                print data
 
 	    else:
-                print("Unknown HTTP request method: {method}".format(method=request_method))
+            print("Unknown HTTP request method: {method}".format(method=request_method))
