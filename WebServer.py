@@ -12,9 +12,9 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(17, GPIO.OUT)
 
-def moveServo(angle):
+def moveServo(param):
     pwm = GPIO.PWM(17, 50)
-    dutyCycle = 3 + angle/18
+    dutyCycle = 3 + param["pos"]/18
     pwm.start(dutyCycle)
     pwm.stop()
     return 0
@@ -108,7 +108,7 @@ class WebServer(object):
                 file_requested = data.split(' ')[1]
 
                 # If get has parameters ('?'), ignore them
-                file_requested =  file_requested.split('?')[0]
+                file_requested = file_requested.split('?')[0]
 
                 if file_requested == "/":
                     file_requested = "/index.html"
@@ -116,12 +116,13 @@ class WebServer(object):
                 request = file_requested.split('/')[1]
                 if request in callbacks:
                     response_header = self._generate_headers(200)
-                    par = file_requested.split('?')
-                    print "FILE REQ"
-                    print file_requested
-                    print "DATA"
-                    print data
-                    #response_data = str(callbacks[request]())
+                    param = {}
+                    pars = data.split(' ')[1].split('?')[1].split('&')
+                    for p in pars:
+                            ps = p.split('=')
+                            param[ps[0]] = ps[1]
+
+                    response_data = str(callbacks[request](param))
 
                 else:
                     filepath_to_serve = self.content_dir + file_requested
