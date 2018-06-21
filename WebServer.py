@@ -91,12 +91,6 @@ class WebServer(object):
             threading.Thread(target=self._handle_client, args=(client, address)).start()
 
     def _handle_client(self, client, address):
-        """
-        Main loop for handling connecting clients and serving files from content_dir
-        Parameters:
-            - client: socket client from accept()
-            - address: socket address from accept()
-        """
         PACKET_SIZE = 1024
         while True:
             print("CLIENT",client)
@@ -118,23 +112,30 @@ class WebServer(object):
                 if file_requested == "/":
                     file_requested = "/index.html"
 
-                filepath_to_serve = self.content_dir + file_requested
-                print("Serving web page [{fp}]".format(fp=filepath_to_serve))
-
-                # Load and Serve files content
-                try:
-                    f = open(filepath_to_serve, 'rb')
-                    if request_method == "GET": # Read only for GET
-                        response_data = f.read()
-                    f.close()
+                request = file_requested.split('/')[1]
+                if request in callbacks:
                     response_header = self._generate_headers(200)
+                    response_data = str(callbacks[request]())
 
-                except Exception as e:
-                    print("File not found. Serving 404 page.")
-                    response_header = self._generate_headers(404)
+                else:
+                    filepath_to_serve = self.content_dir + file_requested
+                    print("Serving web page [{fp}]".format(fp=filepath_to_serve))
 
-                    if request_method == "GET": # Temporary 404 Response Page
-                        response_data = "<html><body><center><h1>Error 404: File not found</h1></center><p>Head back to <a href=\"/\">dry land</a>.</p></body></html>"
+                    # Load and Serve files content
+                    try:
+                        f = open(filepath_to_serve, 'rb')
+                        if request_method == "GET": # Read only for GET
+                            response_data = f.read()
+                        f.close()
+                        response_header = self._generate_headers(200)
+
+                    except Exception as e:
+                        print("File not found. Serving 404 page.")
+                        response_header = self._generate_headers(404)
+
+                        if request_method == "GET": # Temporary 404 Response Page
+                            response_data = b"<html><body><center><h1>Error 404: File not found</h1></center><p>Head back to <a href="/">dry land</a>.</p></body></html>"
+
 
                 response = response_header.encode()
                 if request_method == "GET":
@@ -143,10 +144,5 @@ class WebServer(object):
                 client.sendall(response)
                 client.close()
                 break
-
-            elif request_method == "POST":
-                print("POST REQUEST")
-                print data
-
-        else:
-            print("Unknown HTTP request method: {method}".format(method=request_method))
+            else:
+                print("Unknown HTTP request method: {method}".format(method=request_method))
