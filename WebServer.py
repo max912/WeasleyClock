@@ -148,5 +148,5 @@ class WebServer(object):
                 print("POST REQUEST")
                 print data
 
-	    else:
+        else:
             print("Unknown HTTP request method: {method}".format(method=request_method))
